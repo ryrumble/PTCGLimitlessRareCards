@@ -7,6 +7,7 @@ and extracting decklist information with intelligent caching.
 
 import json
 import os
+import re
 import time
 import logging
 from datetime import datetime
@@ -15,6 +16,8 @@ from dataclasses import dataclass
 import requests
 from bs4 import BeautifulSoup
 from regulation_filter import is_g_regulation, is_duplicate_skip
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -72,15 +75,16 @@ class LimitlessScraper:
         
     def _setup_logging(self):
         """Setup logging configuration."""
-        logging.basicConfig(
-            level=logging.INFO,
-            format='%(asctime)s - %(levelname)s - %(message)s',
-            handlers=[
-                logging.FileHandler('scraper.log'),
-                logging.StreamHandler()
-            ]
-        )
-        self.logger = logging.getLogger(__name__)
+        if not logger.handlers:
+            handler_file = logging.FileHandler('scraper.log')
+            handler_stream = logging.StreamHandler()
+            formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+            handler_file.setFormatter(formatter)
+            handler_stream.setFormatter(formatter)
+            logger.addHandler(handler_file)
+            logger.addHandler(handler_stream)
+            logger.setLevel(logging.INFO)
+        self.logger = logger
         
     def _load_config(self) -> Dict:
         """Load configuration from JSON file."""
@@ -190,7 +194,6 @@ class LimitlessScraper:
                         player_name = "Unknown"
 
                     # Remove any images from the deck name using regex
-                    import re
                     deck_name = re.sub(r'<span.*?>(.*?)</span>', '', deck_name)
                     deck_name = re.sub(r'<img.*?>', '', deck_name)
                     deck_name = deck_name.strip()
@@ -325,7 +328,6 @@ class LimitlessScraper:
 
         # Extract latest tournament date based on table order (top row is latest)
         # Optionally append the year by visiting the tournament page link.
-        import re
         latest_tournament: Optional[str] = None
         if decklists:
             first_entry = decklists[0]

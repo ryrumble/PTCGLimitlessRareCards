@@ -27,7 +27,7 @@ pkmnOnlineLimitlessRarePlacingCardsJapanTournaments/
 ## 🚀 Key Features Implemented
 
 ### ✅ Core Functionality
-- **Smart Web Scraping**: Dual engine (requests + Selenium fallback)
+- **Smart Web Scraping**: Requests-based with rate limiting and retry logic
 - **Intelligent Caching**: 
   - Permanent skip for cards with >7 decklists
   - Temporary cache for cards with 0 decklists
@@ -66,9 +66,8 @@ pkmnOnlineLimitlessRarePlacingCardsJapanTournaments/
 ### Dependencies
 - **requests**: HTTP requests for web scraping
 - **beautifulsoup4**: HTML parsing
-- **selenium**: JavaScript-heavy page handling
 - **pandas**: Data processing and export
-- **webdriver-manager**: Automatic ChromeDriver management
+- **openpyxl**: Excel export support
 
 ### Configuration
 - **JSON-based**: Easy to edit and version control
@@ -79,7 +78,7 @@ pkmnOnlineLimitlessRarePlacingCardsJapanTournaments/
 
 1. **Configuration Loading** → Load set configurations from `config.json`
 2. **Cache Check** → Check if cards should be skipped based on cache
-3. **Web Scraping** → Fetch pages using requests, fallback to Selenium
+3. **Web Scraping** → Fetch pages using requests with rate limiting
 4. **Data Extraction** → Parse decklist tables and count entries
 5. **Cache Update** → Store results with appropriate skip flags
 6. **Results Display** → Show results in GUI or CLI format
@@ -127,7 +126,6 @@ print(f"Found {result.decklist_count} decklists")
 - ✅ Scraper initialization
 - ✅ Configuration loading
 - ✅ Cache management
-- ✅ Selenium WebDriver
 - ✅ Single card scraping
 - ✅ Export functionality
 
@@ -149,7 +147,7 @@ print(f"Found {result.decklist_count} decklists")
 ### Network Errors
 - **Retry Logic**: Exponential backoff for failed requests
 - **Timeout Handling**: Graceful handling of slow connections
-- **Fallback Methods**: Selenium when requests fail
+- **Fallback Methods**: Retry with exponential backoff
 
 ### Configuration Errors
 - **Validation**: JSON syntax and data validation

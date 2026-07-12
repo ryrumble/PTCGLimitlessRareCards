@@ -75,23 +75,6 @@ def test_single_card_scraping(scraper, set_code="JTG", card_number=21):
         return False
 
 
-def test_selenium_fallback(scraper):
-    """Test Selenium WebDriver initialization."""
-    print("\nTesting Selenium WebDriver...")
-    try:
-        driver = scraper._get_selenium_driver()
-        if driver:
-            print("✓ Selenium WebDriver initialized successfully")
-            scraper._close_selenium_driver()
-            return True
-        else:
-            print("✗ Failed to initialize Selenium WebDriver")
-            return False
-    except Exception as e:
-        print(f"✗ Selenium WebDriver error: {e}")
-        return False
-
-
 def test_set_scraping(scraper, set_code="JTG", max_cards=5):
     """Test scraping a small set."""
     print(f"\nTesting set scraping ({set_code}, max {max_cards} cards)...")
@@ -168,7 +151,6 @@ def run_all_tests():
     tests = [
         ("Configuration Loading", lambda: test_config_loading(scraper)),
         ("Cache Loading", lambda: test_cache_loading(scraper)),
-        ("Selenium WebDriver", lambda: test_selenium_fallback(scraper)),
         ("Single Card Scraping", lambda: test_single_card_scraping(scraper)),
         ("Export Functionality", lambda: test_export_functionality(scraper)),
     ]

@@ -15,7 +15,7 @@ A comprehensive Python web scraping application for crawling LimitlessTCG card p
 - **Export Options**: CSV and Excel export formats
 
 ### 🔧 Technical Features
-- **Dual Scraping Engine**: Requests + Selenium fallback for JavaScript-heavy pages
+- **Web Scraping**: Requests-based with rate limiting and retry logic
 - **Rate Limiting**: Respectful scraping with configurable delays
 - **Error Handling**: Comprehensive error handling and logging
 - **Threading**: Non-blocking GUI operations during scraping
@@ -31,7 +31,6 @@ A comprehensive Python web scraping application for crawling LimitlessTCG card p
 
 ### Prerequisites
 - Python 3.7 or higher
-- Chrome browser (for Selenium fallback)
 
 ### Setup
 1. **Clone or download the project**
@@ -214,7 +213,7 @@ The application comes pre-configured with the following Pokemon TCG sets:
 
 #### `limitless_scraper.py`
 - **Main scraper class** with intelligent caching
-- **Dual scraping engine** (requests + Selenium)
+- **Web scraping engine** (requests with retry logic)
 - **Rate limiting and error handling**
 - **Cache management and persistence**
 
@@ -233,7 +232,7 @@ The application comes pre-configured with the following Pokemon TCG sets:
 ### Data Flow
 1. **Configuration Loading**: Load set configurations from `config.json`
 2. **Cache Check**: Check if cards should be skipped based on cache
-3. **Web Scraping**: Fetch pages using requests, fallback to Selenium
+3. **Web Scraping**: Fetch pages using requests with rate limiting
 4. **Data Extraction**: Parse decklist tables and count entries
 5. **Cache Update**: Store results with appropriate skip flags
 6. **Results Display**: Show results in GUI or CLI format
@@ -284,12 +283,6 @@ The application comes pre-configured with the following Pokemon TCG sets:
 ## Troubleshooting
 
 ### Common Issues
-
-#### Selenium WebDriver Issues
-```bash
-# Install ChromeDriver manually if needed
-pip install webdriver-manager
-```
 
 #### Network Connectivity
 - Check internet connection
