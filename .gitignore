@@ -8,6 +8,10 @@ dist/
 build/
 *.egg
 
+# PyInstaller
+*.spec
+LimitlessTCGScraper.exe
+
 # Virtual environment
 .venv/
 venv/

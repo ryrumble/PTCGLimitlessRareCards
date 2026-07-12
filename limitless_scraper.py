@@ -8,7 +8,9 @@ and extracting decklist information with intelligent caching.
 import json
 import os
 import re
+import sys
 import time
+import shutil
 import logging
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple
@@ -61,10 +63,26 @@ class LimitlessScraper:
             config_file: Path to configuration JSON file
             cache_file: Path to cache JSON file
         """
-        # Normalize paths relative to this file so launching from any CWD works
-        base_dir = os.path.dirname(os.path.abspath(__file__))
+        # When frozen by PyInstaller, __file__ points to a temp directory.
+        # Use the .exe's directory so config/cache/log live next to the executable.
+        if getattr(sys, 'frozen', False):
+            base_dir = os.path.dirname(sys.executable)
+            bundled_dir = sys._MEIPASS
+        else:
+            base_dir = os.path.dirname(os.path.abspath(__file__))
+            bundled_dir = None
+
         self.config_file = config_file if os.path.isabs(config_file) else os.path.join(base_dir, config_file)
         self.cache_file = cache_file if os.path.isabs(cache_file) else os.path.join(base_dir, cache_file)
+        self.base_dir = base_dir
+
+        # On first run as .exe, copy the bundled config.json next to the .exe
+        # so the GUI can edit and save it locally.
+        if bundled_dir and not os.path.exists(self.config_file):
+            bundled_config = os.path.join(bundled_dir, config_file)
+            if os.path.exists(bundled_config):
+                shutil.copy2(bundled_config, self.config_file)
+
         self.config = self._load_config()
         self.cache = self._load_cache()
         self.session = requests.Session()
@@ -76,7 +94,8 @@ class LimitlessScraper:
     def _setup_logging(self):
         """Setup logging configuration."""
         if not logger.handlers:
-            handler_file = logging.FileHandler('scraper.log')
+            log_path = os.path.join(self.base_dir, 'scraper.log')
+            handler_file = logging.FileHandler(log_path)
             handler_stream = logging.StreamHandler()
             formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
             handler_file.setFormatter(formatter)

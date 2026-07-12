@@ -29,6 +29,16 @@ A comprehensive Python web scraping application for crawling LimitlessTCG card p
 
 ## Installation
 
+### Quick Start (No Python Required)
+
+If you just want to use the app without installing Python:
+
+1. Download `LimitlessTCGScraper.exe` from the latest [GitHub Release](../../releases)
+2. Place it next to a `config.json` file (see below for config)
+3. Double-click to run — `cache.json` and `scraper.log` are created automatically in the same directory
+
+**To get a `config.json`:** Either copy one from this repository, or the `.exe` will auto-create a default one on first run if bundled. You can also run the app once from source to generate it, then use that file alongside the `.exe`.
+
 ### Prerequisites
 - Python 3.7 or higher
 
@@ -309,6 +319,7 @@ pkmnOnlineLimitlessRarePlacingCardsJapanTournaments/
 ├── cli_app.py               # CLI application
 ├── config.json              # Configuration file
 ├── requirements.txt         # Python dependencies
+├── build_exe.bat            # Build script for .exe
 ├── README.md               # This file
 ├── cache.json              # Cache file (created automatically)
 └── scraper.log             # Log file (created automatically)
@@ -319,6 +330,19 @@ pkmnOnlineLimitlessRarePlacingCardsJapanTournaments/
 2. **Update GUI** in `gui_app.py` for new features
 3. **Add CLI commands** in `cli_app.py`
 4. **Update documentation** in `README.md`
+
+### Building the .exe
+To build a standalone Windows executable (no Python required to run):
+
+```bash
+# Install PyInstaller if not already installed
+pip install pyinstaller
+
+# Run the build script (runs tests first, then builds)
+build_exe.bat
+```
+
+The resulting `LimitlessTCGScraper.exe` will be in the project root. Upload it to a [GitHub Release](../../releases) for distribution.
 
 ### Testing
 ```bash
