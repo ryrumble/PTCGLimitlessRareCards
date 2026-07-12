@@ -36,7 +36,7 @@ echo.
 
 REM Step 3: Build the .exe
 echo Building standalone .exe with PyInstaller...
-pyinstaller --onefile --windowed --name LimitlessTCGScraper --add-data "config.json;." run_gui.py
+python -m PyInstaller --onefile --windowed --name LimitlessTCGScraper --add-data "config.json;." run_gui.py
 if errorlevel 1 (
     echo.
     echo ERROR: PyInstaller build failed.
