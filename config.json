@@ -1,0 +1,140 @@
+{
+  "sets": {
+    "SVP": {
+      "start": 1,
+      "end": 207,
+      "enabled": true
+    },
+    "SVI": {
+      "start": 1,
+      "end": 198,
+      "enabled": true
+    },
+    "PAL": {
+      "start": 1,
+      "end": 193,
+      "enabled": true
+    },
+    "OBF": {
+      "start": 1,
+      "end": 197,
+      "enabled": true
+    },
+    "MEG": {
+      "start": 1,
+      "end": 133,
+      "enabled": true
+    },
+    "MEW": {
+      "start": 1,
+      "end": 165,
+      "enabled": true
+    },
+    "PAR": {
+      "start": 1,
+      "end": 182,
+      "enabled": true
+    },
+    "PAF": {
+      "start": 1,
+      "end": 91,
+      "enabled": true
+    },
+    "TEF": {
+      "start": 1,
+      "end": 162,
+      "enabled": true
+    },
+    "TWM": {
+      "start": 1,
+      "end": 167,
+      "enabled": true
+    },
+    "SFA": {
+      "start": 1,
+      "end": 64,
+      "enabled": true
+    },
+    "SCR": {
+      "start": 1,
+      "end": 142,
+      "enabled": true
+    },
+    "SSP": {
+      "start": 1,
+      "end": 191,
+      "enabled": true
+    },
+    "PRE": {
+      "start": 1,
+      "end": 131,
+      "enabled": true
+    },
+    "JTG": {
+      "start": 1,
+      "end": 159,
+      "enabled": true
+    },
+    "DRI": {
+      "start": 1,
+      "end": 182,
+      "enabled": true
+    },
+    "WHT": {
+      "start": 1,
+      "end": 86,
+      "enabled": true
+    },
+    "BLK": {
+      "start": 1,
+      "end": 86,
+      "enabled": true
+    },
+    "PFL": {
+      "start": 1,
+      "end": 94,
+      "enabled": true
+    },
+    "POR": {
+      "start": 1,
+      "end": 88,
+      "enabled": true,
+      "regulation": "",
+      "skip_g_regulation_cards": true,
+      "duplicate_skip_numbers": [
+        71,
+        72,
+        76,
+        80,
+        81,
+        82,
+        83
+      ]
+    },
+    "ASC": {
+      "start": 1,
+      "end": 215,
+      "enabled": true
+    },
+    "CRI": {
+      "start": 1,
+      "end": 86,
+      "enabled": true,
+      "regulation": "",
+      "skip_g_regulation_cards": true,
+      "duplicate_skip_numbers": []
+    }
+  },
+  "cache_settings": {
+    "max_decklist_threshold": 7
+  },
+  "filter_settings": {
+    "exclude_g_regulation": true
+  },
+  "scraping_settings": {
+    "request_delay": 3.0,
+    "max_retries": 3,
+    "timeout": 30,
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+  }
+}
