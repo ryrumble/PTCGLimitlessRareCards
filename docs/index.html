@@ -51,7 +51,8 @@
   .col-reg { font-size: 0.7rem; color: #9ca3af; text-align: center; width: 32px; }
   .col-set { font-weight: 600; color: #6366f1; }
   .col-num { font-family: monospace; color: #6b7280; }
-  .col-name { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+  .col-name { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; text-decoration: underline 1px dotted transparent; transition: color 0.15s; }
+  .col-name:hover { color: #2563eb; text-decoration-color: #93c5fd; }
   .col-count { font-weight: 600; text-align: right; }
   .col-count.rare { color: #059669; }
   .col-count.popular { color: #dc2626; }
@@ -151,7 +152,7 @@ let allCards = [];
 let filtered = [];
 let sortCol = "c";
 let sortAsc = true;
-let regFilter = null;
+let regSet = new Set();
 
 async function load() {
   try {
@@ -185,20 +186,38 @@ function buildRegButtons() {
   const bar = document.getElementById("reg-bar");
   const counts = {};
   allCards.forEach(c => { counts[c.r] = (counts[c.r] || 0) + 1; });
-  const order = ["G", "H", "I", "J", "?"];
-  let html = `<button class="reg-btn active" data-reg="">All <span class="badge">${allCards.length}</span></button>`;
-  if (counts["G"]) html += `<button class="reg-btn" data-reg="G">G <span class="badge">${counts["G"]}</span></button>`;
-  if (counts["H"]) html += `<button class="reg-btn" data-reg="H">H <span class="badge">${counts["H"]}</span></button>`;
-  if (counts["I"]) html += `<button class="reg-btn" data-reg="I">I <span class="badge">${counts["I"]}</span></button>`;
-  if (counts["J"]) html += `<button class="reg-btn" data-reg="J">J <span class="badge">${counts["J"]}</span></button>`;
-  if (counts["?"]) html += `<button class="reg-btn" data-reg="?">? <span class="badge">${counts["?"]}</span></button>`;
+  const regLetters = ["G", "H", "I", "J", "?"].filter(r => counts[r]);
+  let html = `<button class="reg-btn active" id="reg-all" data-reg="">All <span class="badge">${allCards.length}</span></button>`;
+  regLetters.forEach(r => { html += `<button class="reg-btn" data-reg="${r}">${r} <span class="badge">${counts[r]}</span></button>`; });
   bar.innerHTML = html;
-  bar.querySelectorAll(".reg-btn").forEach(b => b.addEventListener("click", () => {
-    bar.querySelectorAll(".reg-btn").forEach(x => x.classList.remove("active"));
-    b.classList.add("active");
-    regFilter = b.dataset.reg || null;
+
+  // Regulation letter buttons: toggle in/out of regSet
+  bar.querySelectorAll(".reg-btn[data-reg]").forEach(b => {
+    if (b.dataset.reg === "") return; // skip "All" button
+    b.addEventListener("click", () => {
+      const r = b.dataset.reg;
+      if (regSet.has(r)) {
+        regSet.delete(r);
+        b.classList.remove("active");
+      } else {
+        regSet.add(r);
+        b.classList.add("active");
+      }
+      // Manage "All" button state
+      document.getElementById("reg-all").classList.toggle("active", regSet.size === 0);
+      applyFilters();
+    });
+  });
+
+  // "All" button: clear all selections
+  document.getElementById("reg-all").addEventListener("click", () => {
+    regSet.clear();
+    bar.querySelectorAll(".reg-btn[data-reg]").forEach(b => {
+      if (b.dataset.reg !== "") b.classList.remove("active");
+    });
+    document.getElementById("reg-all").classList.add("active");
     applyFilters();
-  }));
+  });
 }
 
 function applyFilters() {
@@ -212,7 +231,7 @@ function applyFilters() {
   const max = maxVal === "" ? 9999 : parseInt(maxVal, 10);
 
   filtered = allCards.filter(c => {
-    if (regFilter && c.r !== regFilter) return false;
+    if (regSet.size > 0 && !regSet.has(c.r)) return false;
     if (setVal && c.s !== setVal) return false;
     if (c.d < min || c.d > max) return false;
     if (monthVal) { const p=c.t.split("/"); if (p.length<2) return false; if (p[0] !== monthVal) return false; }
@@ -261,7 +280,7 @@ function render() {
       <td class="${regCls}">${esc(c.r)}</td>
       <td class="col-set">${esc(c.s)}</td>
       <td class="col-num">${c.n}</td>
-      <td class="col-name">${esc(c.c)}</td>
+      <td class="col-name" onclick="window.open('https://limitlesstcg.com/cards/${esc(c.s)}/${c.n}/decklists/jp','_blank')">${esc(c.c)}</td>
       <td class="${countCls}">${c.d}</td>
       <td class="col-date">${esc(c.t)}</td>
       <td class="col-dup" title="${esc(dups)}">${esc(dups)}</td>
@@ -329,8 +348,10 @@ document.getElementById("btn-reset").addEventListener("click", () => {
   document.getElementById("filter-month").value = "";
   document.getElementById("filter-year").value = "";
   document.getElementById("filter-search").value = "";
-  const allBtn = document.querySelector('.reg-btn[data-reg=""]');
-  if (allBtn) { document.querySelectorAll(".reg-btn").forEach(x => x.classList.remove("active")); allBtn.classList.add("active"); regFilter = null; }
+  regSet.clear();
+  document.querySelectorAll(".reg-btn").forEach(x => x.classList.remove("active"));
+  const allBtn = document.getElementById("reg-all");
+  if (allBtn) allBtn.classList.add("active");
   applyFilters();
 });
 
