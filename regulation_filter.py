@@ -23,15 +23,31 @@ def _load_regulation_data() -> dict:
 _reg_data = _load_regulation_data()
 
 FULL_G_REGULATION_SETS: set[str] = set(_reg_data["full_g_regulation_sets"])
+FULL_H_REGULATION_SETS: set[str] = set(_reg_data.get("full_h_regulation_sets", []))
 FULL_I_REGULATION_SETS: set[str] = set(_reg_data["full_i_regulation_sets"])
+FULL_J_REGULATION_SETS: set[str] = set(_reg_data.get("full_j_regulation_sets", []))
 
 MIXED_SET_G_CARDS: dict[str, set[int]] = {}
+MIXED_SET_OTHER_REGULATION: dict[str, str] = {}
 for set_code, cfg in _reg_data["mixed_set_g_cards"].items():
     if "include" in cfg:
         MIXED_SET_G_CARDS[set_code] = set(cfg["include"])
     elif "all_except" in cfg:
         end = cfg["set_end"]
         MIXED_SET_G_CARDS[set_code] = set(range(1, end + 1)) - set(cfg["all_except"])
+    if "other_regulation" in cfg:
+        MIXED_SET_OTHER_REGULATION[set_code] = cfg["other_regulation"]
+
+# Build reverse mapping: regulation letter -> set codes
+REGULATION_LETTERS: dict[str, list[str]] = {}
+for letter, sets in _reg_data.get("set_regulation", {}).items():
+    REGULATION_LETTERS[letter] = sets
+
+# Build forward mapping: set code -> regulation letter
+SET_REGULATION: dict[str, str] = {}
+for letter, sets in REGULATION_LETTERS.items():
+    for set_code in sets:
+        SET_REGULATION[set_code] = letter
 
 DUPLICATE_SKIP_CARDS: dict[str, set[int]] = {
     set_code: set(numbers) for set_code, numbers in _reg_data["duplicate_skip_cards"].items()
@@ -54,13 +70,48 @@ def is_g_regulation(set_code: str, card_number: int) -> bool:
     if set_code in FULL_G_REGULATION_SETS:
         return True
 
-    if set_code in FULL_I_REGULATION_SETS:
+    if set_code in FULL_I_REGULATION_SETS or set_code in FULL_J_REGULATION_SETS or set_code in FULL_H_REGULATION_SETS:
         return False
 
     if set_code in MIXED_SET_G_CARDS:
         return card_number in MIXED_SET_G_CARDS[set_code]
 
     return False
+
+
+def get_regulation(set_code: str, card_number: int) -> str:
+    """
+    Get the regulation letter for a card.
+
+    Args:
+        set_code: Set code (e.g., 'JTG')
+        card_number: Card number
+
+    Returns:
+        Regulation letter: 'F', 'G', 'H', 'I', 'J', or '?' if unknown
+    """
+    set_code = set_code.upper()
+
+    if set_code in FULL_G_REGULATION_SETS:
+        return "G"
+    if set_code in FULL_H_REGULATION_SETS:
+        return "H"
+    if set_code in FULL_I_REGULATION_SETS:
+        return "I"
+    if set_code in FULL_J_REGULATION_SETS:
+        return "J"
+
+    # Mixed sets: check if the card is G regulation (the minority exceptions)
+    if set_code in MIXED_SET_G_CARDS:
+        if is_g_regulation(set_code, card_number):
+            return "G"
+        other = MIXED_SET_OTHER_REGULATION.get(set_code)
+        if other:
+            return other
+        # Fall back to set-level mapping
+        return SET_REGULATION.get(set_code, "?")
+
+    return SET_REGULATION.get(set_code, "?")
 
 
 def is_duplicate_skip(set_code: str, card_number: int) -> bool:

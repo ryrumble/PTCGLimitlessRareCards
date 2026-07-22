@@ -10,7 +10,17 @@ import os
 import re
 import sys
 
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from regulation_filter import get_regulation
+
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+def img_url(set_code, card_number):
+    """Construct the LimitlessTCG CDN URL for a card image."""
+    return (
+        f"https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/tpci/{set_code}/{set_code}_{card_number:03d}_R_EN_SM.png"
+    )
 
 
 def load_cache():
@@ -34,6 +44,7 @@ def export_cards(cache):
             continue
         set_code = match.group(1)
         card_number = int(match.group(2))
+        reg = get_regulation(set_code, card_number)
         cards.append(
             {
                 "s": set_code,
@@ -42,6 +53,8 @@ def export_cards(cache):
                 "d": data.get("decklist_count", 0),
                 "t": data.get("latest_tournament") or "",
                 "p": data.get("skip_permanent", False),
+                "r": reg,
+                "i": img_url(set_code, card_number),
             }
         )
     cards.sort(key=lambda x: (x["s"], x["n"]))
@@ -61,7 +74,12 @@ def main():
 
     print(f"Exported {len(cards)} cards to {os.path.relpath(out_path, REPO_ROOT)}")
 
-    # Collect unique set codes for the filter dropdown
+    reg_counts = {}
+    for c in cards:
+        reg_counts[c["r"]] = reg_counts.get(c["r"], 0) + 1
+    for reg in sorted(reg_counts):
+        print(f"  Reg {reg}: {reg_counts[reg]} cards")
+
     set_codes = sorted(set(c["s"] for c in cards))
     print(f"Sets: {', '.join(set_codes)}")
 

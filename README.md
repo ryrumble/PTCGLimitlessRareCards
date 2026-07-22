@@ -7,12 +7,13 @@ A comprehensive Python web scraping application for crawling LimitlessTCG card p
 ### 🎯 Core Functionality
 - **Smart Web Scraping**: Crawls LimitlessTCG card pages with intelligent caching
 - **Dual Interface**: Both GUI (tkinter) and CLI applications
+- **Web Viewer**: Static HTML dashboard on GitHub Pages — view cards by regulation, filter by set/count/date, see card images on hover. No server needed.
 - **Intelligent Caching**:
   - Permanent skip for cards with >7 decklists
   - Temporary cache for cards with 0 decklists (re-check in future)
   - Temporary cache for cards with 1-7 decklists (re-check periodically)
 - **Set Management**: Add, edit, remove, and configure card sets
-- **Export Options**: CSV and Excel export formats
+- **Export Options**: CSV export (no pandas required)
 
 ### 🔧 Technical Features
 - **Web Scraping**: Requests-based with rate limiting and retry logic
@@ -216,6 +217,23 @@ The application comes pre-configured with the following Pokemon TCG sets:
   }
 }
 ```
+
+## Web Viewer (GitHub Pages)
+
+A static HTML dashboard is available at **`https://ryrumble.github.io/PTCGLimitlessRareCards/`** (enable Pages in repo Settings → Pages → `main` / `docs`).
+
+**Features:**
+- **Regulation filter buttons** — filter by regulation format (G, H, I, J, or unknown)
+- **Card images on hover** — images loaded from LimitlessTCG's CDN (one lightweight GET per image)
+- **Sortable columns** — click any column header to sort
+- **Filters** — set code, decklist count range, tournament month/year, card name search
+- **No scrape capability** — view-only, all data pre-cached and committed to repo
+
+**To refresh the data** after a scrape:
+```bash
+python scripts/generate_web_data.py
+```
+Then commit and push the updated `docs/data/cards.json`.
 
 ## Architecture
 

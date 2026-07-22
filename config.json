@@ -123,6 +123,11 @@
       "regulation": "",
       "skip_g_regulation_cards": true,
       "duplicate_skip_numbers": []
+    },
+    "PBL": {
+      "start": 1,
+      "end": 84,
+      "enabled": true
     }
   },
   "cache_settings": {

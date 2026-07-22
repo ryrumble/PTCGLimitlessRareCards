@@ -13,98 +13,123 @@
   .subtitle { color: #666; font-size: 0.85rem; margin-bottom: 16px; }
 
   /* Stats bar */
-  .stats { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
-  .stat-card { background: #fff; border-radius: 8px; padding: 12px 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); flex: 1; min-width: 120px; }
-  .stat-card .num { font-size: 1.5rem; font-weight: 700; }
-  .stat-card .label { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+  .stats { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+  .stat-card { background: #fff; border-radius: 8px; padding: 10px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); flex: 1; min-width: 140px; }
+  .stat-card .num { font-size: 1.3rem; font-weight: 700; }
+  .stat-card .label { font-size: 0.7rem; color: #888; line-height: 1.3; }
   .stat-card.highlight .num { color: #2563eb; }
 
-  /* Filters */
-  .filters { background: #fff; border-radius: 8px; padding: 12px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin-bottom: 12px; display: flex; gap: 12px; flex-wrap: wrap; align-items: end; }
+  /* Regulation filter buttons */
+  .reg-bar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+  .reg-btn { padding: 6px 14px; border: 1px solid #d1d5db; border-radius: 20px; background: #fff; cursor: pointer; font-size: 0.8rem; transition: all 0.15s; }
+  .reg-btn:hover { background: #f3f4f6; }
+  .reg-btn.active { background: #2563eb; color: #fff; border-color: #2563eb; }
+  .reg-btn .badge { display: inline-block; background: #e5e7eb; color: #6b7280; border-radius: 10px; padding: 0 7px; font-size: 0.7rem; margin-left: 4px; font-weight: 600; }
+  .reg-btn.active .badge { background: rgba(255,255,255,0.25); color: #fff; }
+
+  /* Filters bar */
+  .filters { background: #fff; border-radius: 8px; padding: 12px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin-bottom: 12px; display: flex; gap: 10px; flex-wrap: wrap; align-items: end; }
   .filter-group { display: flex; flex-direction: column; gap: 3px; }
-  .filter-group label { font-size: 0.7rem; color: #888; text-transform: uppercase; letter-spacing: 0.4px; }
-  .filter-group select, .filter-group input { padding: 6px 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.85rem; background: #fff; }
-  .filter-group input[type=number] { width: 72px; }
+  .filter-group label { font-size: 0.7rem; color: #888; text-transform: uppercase; letter-spacing: 0.4px; white-space: nowrap; }
+  .filter-group select, .filter-group input { padding: 5px 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.85rem; background: #fff; }
   .filter-group select { min-width: 80px; }
-  .btn-reset { padding: 6px 14px; background: #e5e7eb; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
+  .btn-reset { padding: 5px 12px; background: #e5e7eb; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
   .btn-reset:hover { background: #d1d5db; }
   .result-count { font-size: 0.85rem; color: #666; margin-left: auto; align-self: center; }
 
   /* Table */
-  .table-wrap { background: #fff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); overflow-x: auto; }
+  .table-wrap { background: #fff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); overflow-x: auto; position: relative; }
   table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
   th { background: #f9fafb; padding: 10px 12px; text-align: left; font-weight: 600; cursor: pointer; white-space: nowrap; user-select: none; border-bottom: 2px solid #e5e7eb; }
   th:hover { background: #f3f4f6; }
   th .arrow { margin-left: 4px; font-size: 0.7rem; color: #9ca3af; }
   th.active .arrow { color: #2563eb; }
   td { padding: 8px 12px; border-bottom: 1px solid #f3f4f6; }
-  tr:hover td { background: #fafbfc; }
+  .table-row { transition: background 0.1s; }
+  .table-row:hover td { background: #f0f4ff; }
 
+  .col-reg { font-size: 0.7rem; color: #9ca3af; text-align: center; width: 32px; }
   .col-set { font-weight: 600; color: #6366f1; }
   .col-num { font-family: monospace; color: #6b7280; }
-  .col-name { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .col-name { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
   .col-count { font-weight: 600; text-align: right; }
-  .col-count.target { color: #059669; }
-  .col-count.high { color: #dc2626; }
-  .col-count.zero { color: #9ca3af; }
+  .col-count.rare { color: #059669; }
+  .col-count.popular { color: #dc2626; }
+  .col-count.unseen { color: #9ca3af; }
   .col-date { font-family: monospace; font-size: 0.8rem; color: #6b7280; }
 
-  /* Highlight rows in target range */
-  tr.target td { background: #f0fdf4; }
-  tr.target:hover td { background: #dcfce7; }
+  /* Target range rows */
+  tr.rare td { background: #f0fdf4; }
+  tr.rare:hover td { background: #dcfce7; }
 
-  /* Responsive */
+  /* Card image tooltip */
+  .card-tooltip { display: none; position: fixed; z-index: 1000; background: #fff; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); overflow: hidden; pointer-events: none; width: 180px; }
+  .card-tooltip img { width: 100%; display: block; }
+  .card-tooltip .tip-name { padding: 6px 8px; font-size: 0.75rem; text-align: center; color: #333; background: #fafafa; }
+
+  .col-reg-F { color: #ef4444; }
+  .col-reg-G { color: #2563eb; }
+  .col-reg-H { color: #059669; }
+  .col-reg-I { color: #d97706; }
+  .col-reg-J { color: #7c3aed; }
+  .col-reg-\\? { color: #9ca3af; }
+
   @media (max-width: 768px) {
-    .stats { gap: 8px; }
-    .stat-card { padding: 10px 14px; min-width: 90px; }
-    .stat-card .num { font-size: 1.2rem; }
-    .filters { gap: 8px; padding: 10px 12px; }
-    .filter-group select { min-width: 70px; }
-    td, th { padding: 6px 8px; }
-    .col-name { max-width: 120px; }
+    .stats { gap: 6px; }
+    .stat-card { padding: 8px 12px; min-width: 100px; }
+    .stat-card .num { font-size: 1.1rem; }
+    .filters { gap: 6px; padding: 10px 12px; }
+    .filter-group select { min-width: 65px; }
+    td, th { padding: 5px 6px; }
+    .col-name { max-width: 100px; }
+    .card-tooltip { width: 130px; }
   }
 </style>
 </head>
 <body>
 <div class="container">
   <h1>Rare Placing Cards — Japan Tournaments</h1>
-  <p class="subtitle">Cards with decklist counts from LimitlessTCG Japan tournament data</p>
+  <p class="subtitle">Decklist counts from LimitlessTCG Japan tournament data. Hover a row to see the card.</p>
 
   <div class="stats" id="stats"></div>
 
+  <div class="reg-bar" id="reg-bar"></div>
+
   <div class="filters">
     <div class="filter-group">
-      <label>Set</label>
-      <select id="filter-set"><option value="">All</option></select>
+      <label>Card set</label>
+      <select id="filter-set"><option value="">All sets</option></select>
     </div>
     <div class="filter-group">
-      <label>Decklists min</label>
-      <input type="number" id="filter-min" min="0" max="999" value="" placeholder="0">
+      <label>Decklists</label>
+      <div style="display:flex;gap:4px;align-items:center">
+        <input type="number" id="filter-min" min="0" max="999" value="" placeholder="0" style="width:60px">
+        <span style="color:#999">to</span>
+        <input type="number" id="filter-max" min="0" max="999" value="" placeholder="any" style="width:60px">
+      </div>
     </div>
     <div class="filter-group">
-      <label>Decklists max</label>
-      <input type="number" id="filter-max" min="0" max="999" value="" placeholder="999">
+      <label>Tournament month</label>
+      <select id="filter-month"><option value="">Any month</option></select>
     </div>
     <div class="filter-group">
-      <label>Month (MM)</label>
-      <input type="number" id="filter-month" min="1" max="12" value="" placeholder="">
+      <label>Tournament year</label>
+      <select id="filter-year"><option value="">Any year</option></select>
     </div>
     <div class="filter-group">
-      <label>Year (YYYY)</label>
-      <input type="number" id="filter-year" min="2020" max="2030" value="" placeholder="">
+      <label>Card name</label>
+      <input type="text" id="filter-search" value="" placeholder="e.g. Charizard" style="width:130px">
     </div>
-    <div class="filter-group">
-      <label>Search card name</label>
-      <input type="text" id="filter-search" value="" placeholder="e.g. Charizard" style="width:140px">
-    </div>
-    <button class="btn-reset" id="btn-reset">Reset</button>
+    <button class="btn-reset" id="btn-reset">Reset all filters</button>
     <span class="result-count" id="result-count"></span>
   </div>
 
   <div class="table-wrap">
+    <div class="card-tooltip" id="card-tooltip"><img id="tip-img" alt=""><div class="tip-name" id="tip-name"></div></div>
     <table>
       <thead>
         <tr>
+          <th data-col="r" style="width:32px">R <span class="arrow">&#9650;</span></th>
           <th data-col="s">Set <span class="arrow">&#9650;</span></th>
           <th data-col="n"># <span class="arrow">&#9650;</span></th>
           <th data-col="c" class="active">Card Name <span class="arrow">&#9650;</span></th>
@@ -119,10 +144,12 @@
 
 <script>
 const DATA_URL = "data/cards.json";
+const MAX_THRESHOLD = 7;
 let allCards = [];
 let filtered = [];
 let sortCol = "c";
 let sortAsc = true;
+let regFilter = null;
 
 async function load() {
   try {
@@ -130,22 +157,46 @@ async function load() {
     allCards = await resp.json();
   } catch {
     document.getElementById("tbody").innerHTML =
-      '<tr><td colspan="5" style="text-align:center;padding:40px;color:#999;">Failed to load data.</td></tr>';
+      '<tr><td colspan="6" style="text-align:center;padding:40px;color:#999;">Failed to load data.</td></tr>';
     return;
   }
-  populateSetFilter();
+  populateFilters();
   applyFilters();
 }
 
-function populateSetFilter() {
-  const sel = document.getElementById("filter-set");
+function populateFilters() {
   const sets = [...new Set(allCards.map(c => c.s))].sort();
-  sets.forEach(s => {
-    const opt = document.createElement("option");
-    opt.value = s;
-    opt.textContent = s;
-    sel.appendChild(opt);
-  });
+  const sel = document.getElementById("filter-set");
+  sets.forEach(s => { const o = document.createElement("option"); o.value = s; o.textContent = s; sel.appendChild(o); });
+
+  const monthSel = document.getElementById("filter-month");
+  "01,02,03,04,05,06,07,08,09,10,11,12".split(",").forEach(m => { const o = document.createElement("option"); o.value = m; o.textContent = m; monthSel.appendChild(o); });
+
+  const years = [...new Set(allCards.map(c => { const p = c.t.split("/"); if (p.length<3) return null; let y=parseInt(p[2],10); if(y<100) y+=2000; return y; }).filter(y=>y))].sort();
+  const yearSel = document.getElementById("filter-year");
+  years.forEach(y => { const o = document.createElement("option"); o.value = y; o.textContent = y; yearSel.appendChild(o); });
+
+  buildRegButtons();
+}
+
+function buildRegButtons() {
+  const bar = document.getElementById("reg-bar");
+  const counts = {};
+  allCards.forEach(c => { counts[c.r] = (counts[c.r] || 0) + 1; });
+  const order = ["G", "H", "I", "J", "?"];
+  let html = `<button class="reg-btn active" data-reg="">All <span class="badge">${allCards.length}</span></button>`;
+  if (counts["G"]) html += `<button class="reg-btn" data-reg="G">G <span class="badge">${counts["G"]}</span></button>`;
+  if (counts["H"]) html += `<button class="reg-btn" data-reg="H">H <span class="badge">${counts["H"]}</span></button>`;
+  if (counts["I"]) html += `<button class="reg-btn" data-reg="I">I <span class="badge">${counts["I"]}</span></button>`;
+  if (counts["J"]) html += `<button class="reg-btn" data-reg="J">J <span class="badge">${counts["J"]}</span></button>`;
+  if (counts["?"]) html += `<button class="reg-btn" data-reg="?">? <span class="badge">${counts["?"]}</span></button>`;
+  bar.innerHTML = html;
+  bar.querySelectorAll(".reg-btn").forEach(b => b.addEventListener("click", () => {
+    bar.querySelectorAll(".reg-btn").forEach(x => x.classList.remove("active"));
+    b.classList.add("active");
+    regFilter = b.dataset.reg || null;
+    applyFilters();
+  }));
 }
 
 function applyFilters() {
@@ -155,70 +206,56 @@ function applyFilters() {
   const monthVal = document.getElementById("filter-month").value;
   const yearVal = document.getElementById("filter-year").value;
   const searchVal = document.getElementById("filter-search").value.toLowerCase().trim();
-
   const min = minVal === "" ? 0 : parseInt(minVal, 10);
   const max = maxVal === "" ? 9999 : parseInt(maxVal, 10);
 
   filtered = allCards.filter(c => {
+    if (regFilter && c.r !== regFilter) return false;
     if (setVal && c.s !== setVal) return false;
     if (c.d < min || c.d > max) return false;
-    if (monthVal) {
-      const parts = c.t.split("/");
-      if (parts.length < 2) return false;
-      const m = parseInt(parts[0], 10);
-      if (m !== parseInt(monthVal, 10)) return false;
-    }
-    if (yearVal) {
-      const parts = c.t.split("/");
-      if (parts.length < 3) return false;
-      let y = parseInt(parts[2], 10);
-      if (y < 100) y += 2000;
-      if (y !== parseInt(yearVal, 10)) return false;
-    }
+    if (monthVal) { const p=c.t.split("/"); if (p.length<2) return false; if (p[0] !== monthVal) return false; }
+    if (yearVal) { const p=c.t.split("/"); if (p.length<3) return false; let y=parseInt(p[2],10); if(y<100) y+=2000; if(y!==parseInt(yearVal,10)) return false; }
     if (searchVal && !c.c.toLowerCase().includes(searchVal)) return false;
     return true;
   });
-
   sortData();
   render();
 }
 
 function sortData() {
-  filtered.sort((a, b) => {
-    let va = a[sortCol], vb = b[sortCol];
-    if (sortCol === "n" || sortCol === "d") { va = Number(va); vb = Number(vb); }
-    else if (sortCol === "t") { va = dateVal(va); vb = dateVal(vb); }
-    else { va = (va || "").toLowerCase(); vb = (vb || "").toLowerCase(); }
-    if (va < vb) return sortAsc ? -1 : 1;
-    if (va > vb) return sortAsc ? 1 : -1;
+  filtered.sort((a,b) => {
+    let va=a[sortCol], vb=b[sortCol];
+    if (sortCol==="n"||sortCol==="d") { va=Number(va); vb=Number(vb); }
+    else if (sortCol==="t") { va=dateVal(va); vb=dateVal(vb); }
+    else { va=(va||"").toLowerCase(); vb=(vb||"").toLowerCase(); }
+    if (va<vb) return sortAsc ? -1 : 1;
+    if (va>vb) return sortAsc ? 1 : -1;
     return 0;
   });
 }
 
 function dateVal(s) {
   if (!s) return "0000-00-00";
-  const p = s.split("/");
-  if (p.length === 2) return `9999-${p[0].padStart(2,"0")}-${p[1].padStart(2,"0")}`;
-  if (p.length === 3) {
-    let y = parseInt(p[2], 10);
-    if (y < 100) y += 2000;
-    return `${y}-${p[0].padStart(2,"0")}-${p[1].padStart(2,"0")}`;
-  }
+  const p=s.split("/");
+  if (p.length===2) return `9999-${p[0].padStart(2,"0")}-${p[1].padStart(2,"0")}`;
+  if (p.length===3) { let y=parseInt(p[2],10); if(y<100) y+=2000; return `${y}-${p[0].padStart(2,"0")}-${p[1].padStart(2,"0")}`; }
   return "0000-00-00";
 }
 
 function render() {
   const tbody = document.getElementById("tbody");
-  const maxThreshold = 7;
-
+  const tooltip = document.getElementById("card-tooltip");
   let html = "";
   for (const c of filtered) {
-    const cls = c.d >= 1 && c.d <= maxThreshold ? ' class="target"' : "";
+    const isRare = c.d >= 1 && c.d <= MAX_THRESHOLD;
+    const cls = isRare ? ' class="rare"' : ' class="table-row"';
     let countCls = "col-count";
-    if (c.d === 0) countCls += " zero";
-    else if (c.d > maxThreshold) countCls += " high";
-    else countCls += " target";
-    html += `<tr${cls}>
+    if (c.d === 0) countCls += " unseen";
+    else if (c.d > MAX_THRESHOLD) countCls += " popular";
+    else countCls += " rare";
+    const regCls = `col-reg col-reg-${c.r === "?" ? "\\?" : c.r}`;
+    html += `<tr${cls} data-img="${esc(c.i)}" data-name="${esc(c.c)}">
+      <td class="${regCls}">${esc(c.r)}</td>
       <td class="col-set">${esc(c.s)}</td>
       <td class="col-num">${c.n}</td>
       <td class="col-name">${esc(c.c)}</td>
@@ -226,23 +263,45 @@ function render() {
       <td class="col-date">${esc(c.t)}</td>
     </tr>`;
   }
-  tbody.innerHTML = html || '<tr><td colspan="5" style="text-align:center;padding:40px;color:#999;">No cards match the current filters.</td></tr>';
-
+  tbody.innerHTML = html || '<tr><td colspan="6" style="text-align:center;padding:40px;color:#999;">No cards match the current filters.</td></tr>';
   updateStats();
   document.getElementById("result-count").textContent = `${filtered.length} / ${allCards.length} cards`;
+
+  // Hover image tooltip
+  tbody.querySelectorAll("tr").forEach(tr => {
+    const imgUrl = tr.dataset.img;
+    const name = tr.dataset.name;
+    if (!imgUrl) return;
+    tr.addEventListener("mouseenter", e => {
+      document.getElementById("tip-img").src = imgUrl;
+      document.getElementById("tip-name").textContent = name;
+      positionTooltip(e);
+      tooltip.style.display = "block";
+    });
+    tr.addEventListener("mousemove", e => positionTooltip(e));
+    tr.addEventListener("mouseleave", () => { tooltip.style.display = "none"; });
+  });
+}
+
+function positionTooltip(e) {
+  const t = document.getElementById("card-tooltip");
+  let x = e.clientX + 16, y = e.clientY + 10;
+  if (x + 190 > window.innerWidth) x = e.clientX - 190;
+  if (y + 260 > window.innerHeight) y = window.innerHeight - 270;
+  t.style.left = x + "px";
+  t.style.top = y + "px";
 }
 
 function updateStats() {
-  const maxThreshold = 7;
   const total = filtered.length;
-  const target = filtered.filter(c => c.d >= 1 && c.d <= maxThreshold).length;
-  const zero = filtered.filter(c => c.d === 0).length;
-  const high = filtered.filter(c => c.d > maxThreshold).length;
+  const rare = filtered.filter(c => c.d >= 1 && c.d <= MAX_THRESHOLD).length;
+  const unseen = filtered.filter(c => c.d === 0).length;
+  const popular = filtered.filter(c => c.d > MAX_THRESHOLD).length;
   document.getElementById("stats").innerHTML = `
-    <div class="stat-card highlight"><div class="num">${total}</div><div class="label">Cards shown</div></div>
-    <div class="stat-card highlight"><div class="num">${target}</div><div class="label">Target range (1-${maxThreshold})</div></div>
-    <div class="stat-card"><div class="num">${zero}</div><div class="label">Zero decklists</div></div>
-    <div class="stat-card"><div class="num">${high}</div><div class="label">High (${maxThreshold}+)</div></div>
+    <div class="stat-card highlight"><div class="num">${total}</div><div class="label">Cards visible (matching current filters)</div></div>
+    <div class="stat-card highlight"><div class="num">${rare}</div><div class="label">Rare sweet spot (1 to ${MAX_THRESHOLD} decklists — the target range)</div></div>
+    <div class="stat-card"><div class="num">${unseen}</div><div class="label">Unseen yet (0 decklists found — may still be worth watching)</div></div>
+    <div class="stat-card"><div class="num">${popular}</div><div class="label">Popular (more than ${MAX_THRESHOLD} decklists — too common for the target)</div></div>
   `;
 }
 
@@ -255,8 +314,8 @@ function esc(s) {
 document.getElementById("filter-set").addEventListener("change", applyFilters);
 document.getElementById("filter-min").addEventListener("input", applyFilters);
 document.getElementById("filter-max").addEventListener("input", applyFilters);
-document.getElementById("filter-month").addEventListener("input", applyFilters);
-document.getElementById("filter-year").addEventListener("input", applyFilters);
+document.getElementById("filter-month").addEventListener("change", applyFilters);
+document.getElementById("filter-year").addEventListener("change", applyFilters);
 document.getElementById("filter-search").addEventListener("input", applyFilters);
 
 document.getElementById("btn-reset").addEventListener("click", () => {
@@ -266,13 +325,15 @@ document.getElementById("btn-reset").addEventListener("click", () => {
   document.getElementById("filter-month").value = "";
   document.getElementById("filter-year").value = "";
   document.getElementById("filter-search").value = "";
+  const allBtn = document.querySelector('.reg-btn[data-reg=""]');
+  if (allBtn) { document.querySelectorAll(".reg-btn").forEach(x => x.classList.remove("active")); allBtn.classList.add("active"); regFilter = null; }
   applyFilters();
 });
 
 document.querySelectorAll("th[data-col]").forEach(th => {
   th.addEventListener("click", () => {
     const col = th.dataset.col;
-    if (col === sortCol) { sortAsc = !sortAsc; }
+    if (col === sortCol) sortAsc = !sortAsc;
     else { sortCol = col; sortAsc = true; }
     document.querySelectorAll("th[data-col]").forEach(h => h.classList.remove("active"));
     th.classList.add("active");
