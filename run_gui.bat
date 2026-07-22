@@ -22,4 +22,4 @@ if errorlevel 1 (
     echo.
     echo An error occurred. Please check the message above.
     pause
-) 
+)

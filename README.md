@@ -7,7 +7,7 @@ A comprehensive Python web scraping application for crawling LimitlessTCG card p
 ### 🎯 Core Functionality
 - **Smart Web Scraping**: Crawls LimitlessTCG card pages with intelligent caching
 - **Dual Interface**: Both GUI (tkinter) and CLI applications
-- **Intelligent Caching**: 
+- **Intelligent Caching**:
   - Permanent skip for cards with >7 decklists
   - Temporary cache for cards with 0 decklists (re-check in future)
   - Temporary cache for cards with 1-7 decklists (re-check periodically)
@@ -384,4 +384,4 @@ For issues and questions:
 - Intelligent caching system
 - Set management functionality
 - Export capabilities
-- Comprehensive error handling 
+- Comprehensive error handling

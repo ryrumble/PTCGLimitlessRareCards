@@ -92,4 +92,4 @@ Edit `config.json` to:
 5. **Export results**: Use "Export" button to save data
 6. **Analyze**: Look for cards in the 1-7 decklist range
 
-Happy scraping! 🎉 
+Happy scraping! 🎉

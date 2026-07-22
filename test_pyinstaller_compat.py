@@ -13,7 +13,6 @@ import logging
 import os
 import shutil
 import sys
-import tempfile
 from pathlib import Path
 from unittest.mock import patch
 
@@ -95,9 +94,11 @@ class TestFrozenPaths:
     def test_config_file_resolves_to_exe_dir(self, fake_exe_env):
         exe_dir, bundled_dir = fake_exe_env
 
-        with patch.object(sys, "frozen", True, create=True), \
-             patch.object(sys, "_MEIPASS", str(bundled_dir), create=True), \
-             patch.object(sys, "executable", str(exe_dir / "LimitlessTCGScraper.exe"), create=True):
+        with (
+            patch.object(sys, "frozen", True, create=True),
+            patch.object(sys, "_MEIPASS", str(bundled_dir), create=True),
+            patch.object(sys, "executable", str(exe_dir / "LimitlessTCGScraper.exe"), create=True),
+        ):
             scraper = LimitlessScraper()
 
         expected_config = os.path.join(str(exe_dir), "config.json")
@@ -106,9 +107,11 @@ class TestFrozenPaths:
     def test_cache_file_resolves_to_exe_dir(self, fake_exe_env):
         exe_dir, bundled_dir = fake_exe_env
 
-        with patch.object(sys, "frozen", True, create=True), \
-             patch.object(sys, "_MEIPASS", str(bundled_dir), create=True), \
-             patch.object(sys, "executable", str(exe_dir / "LimitlessTCGScraper.exe"), create=True):
+        with (
+            patch.object(sys, "frozen", True, create=True),
+            patch.object(sys, "_MEIPASS", str(bundled_dir), create=True),
+            patch.object(sys, "executable", str(exe_dir / "LimitlessTCGScraper.exe"), create=True),
+        ):
             scraper = LimitlessScraper()
 
         expected_cache = os.path.join(str(exe_dir), "cache.json")
@@ -120,9 +123,11 @@ class TestFrozenPaths:
         # config.json should NOT exist in exe_dir yet
         assert not (exe_dir / "config.json").exists()
 
-        with patch.object(sys, "frozen", True, create=True), \
-             patch.object(sys, "_MEIPASS", str(bundled_dir), create=True), \
-             patch.object(sys, "executable", str(exe_dir / "LimitlessTCGScraper.exe"), create=True):
+        with (
+            patch.object(sys, "frozen", True, create=True),
+            patch.object(sys, "_MEIPASS", str(bundled_dir), create=True),
+            patch.object(sys, "executable", str(exe_dir / "LimitlessTCGScraper.exe"), create=True),
+        ):
             scraper = LimitlessScraper()
 
         # config.json should now exist in exe_dir (copied from bundled)
@@ -140,18 +145,15 @@ class TestFrozenPaths:
         modified_config = {
             "sets": {"CUSTOM": {"start": 1, "end": 10, "enabled": True}},
             "cache_settings": {"max_decklist_threshold": 5},
-            "scraping_settings": {
-                "request_delay": 2.0,
-                "max_retries": 1,
-                "timeout": 10,
-                "user_agent": "custom-agent"
-            }
+            "scraping_settings": {"request_delay": 2.0, "max_retries": 1, "timeout": 10, "user_agent": "custom-agent"},
         }
         (exe_dir / "config.json").write_text(json.dumps(modified_config), encoding="utf-8")
 
-        with patch.object(sys, "frozen", True, create=True), \
-             patch.object(sys, "_MEIPASS", str(bundled_dir), create=True), \
-             patch.object(sys, "executable", str(exe_dir / "LimitlessTCGScraper.exe"), create=True):
+        with (
+            patch.object(sys, "frozen", True, create=True),
+            patch.object(sys, "_MEIPASS", str(bundled_dir), create=True),
+            patch.object(sys, "executable", str(exe_dir / "LimitlessTCGScraper.exe"), create=True),
+        ):
             scraper = LimitlessScraper()
 
         # The local config should NOT have been overwritten
@@ -161,16 +163,15 @@ class TestFrozenPaths:
     def test_log_file_resolves_to_exe_dir(self, fake_exe_env):
         exe_dir, bundled_dir = fake_exe_env
 
-        with patch.object(sys, "frozen", True, create=True), \
-             patch.object(sys, "_MEIPASS", str(bundled_dir), create=True), \
-             patch.object(sys, "executable", str(exe_dir / "LimitlessTCGScraper.exe"), create=True):
+        with (
+            patch.object(sys, "frozen", True, create=True),
+            patch.object(sys, "_MEIPASS", str(bundled_dir), create=True),
+            patch.object(sys, "executable", str(exe_dir / "LimitlessTCGScraper.exe"), create=True),
+        ):
             scraper = LimitlessScraper()
 
         expected_log = os.path.join(str(exe_dir), "scraper.log")
-        file_handlers = [
-            h for h in scraper.logger.handlers
-            if type(h) is logging.FileHandler
-        ]
+        file_handlers = [h for h in scraper.logger.handlers if isinstance(h, logging.FileHandler)]
         assert len(file_handlers) >= 1
         assert file_handlers[0].baseFilename == os.path.abspath(expected_log)
 
@@ -181,11 +182,22 @@ class TestAbsolutePathsUnaffected:
     def test_absolute_config_path_used_as_is(self, fake_exe_env, tmp_path):
         exe_dir, bundled_dir = fake_exe_env
         custom_config = tmp_path / "custom_config.json"
-        custom_config.write_text(json.dumps({"sets": {}, "cache_settings": {"max_decklist_threshold": 7}, "scraping_settings": {"request_delay": 1.0, "max_retries": 3, "timeout": 30, "user_agent": "test"}}), encoding="utf-8")
+        custom_config.write_text(
+            json.dumps(
+                {
+                    "sets": {},
+                    "cache_settings": {"max_decklist_threshold": 7},
+                    "scraping_settings": {"request_delay": 1.0, "max_retries": 3, "timeout": 30, "user_agent": "test"},
+                }
+            ),
+            encoding="utf-8",
+        )
 
-        with patch.object(sys, "frozen", True, create=True), \
-             patch.object(sys, "_MEIPASS", str(bundled_dir), create=True), \
-             patch.object(sys, "executable", str(exe_dir / "LimitlessTCGScraper.exe"), create=True):
+        with (
+            patch.object(sys, "frozen", True, create=True),
+            patch.object(sys, "_MEIPASS", str(bundled_dir), create=True),
+            patch.object(sys, "executable", str(exe_dir / "LimitlessTCGScraper.exe"), create=True),
+        ):
             scraper = LimitlessScraper(config_file=str(custom_config))
 
         assert scraper.config_file == str(custom_config)

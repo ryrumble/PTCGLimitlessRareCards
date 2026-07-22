@@ -28,7 +28,7 @@ pkmnOnlineLimitlessRarePlacingCardsJapanTournaments/
 
 ### ✅ Core Functionality
 - **Smart Web Scraping**: Requests-based with rate limiting and retry logic
-- **Intelligent Caching**: 
+- **Intelligent Caching**:
   - Permanent skip for cards with >7 decklists
   - Temporary cache for cards with 0 decklists
   - Temporary cache for cards with 1-7 decklists
@@ -231,4 +231,4 @@ print(f"Found {result.decklist_count} decklists")
 - ✅ Testing suite passing
 - ✅ Cross-platform compatibility
 
-**Ready for Use**: The application is fully functional and ready for production use in Pokemon TCG tournament analysis and research. 
+**Ready for Use**: The application is fully functional and ready for production use in Pokemon TCG tournament analysis and research.
