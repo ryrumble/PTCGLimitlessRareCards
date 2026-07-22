@@ -11,10 +11,11 @@ import re
 import sys
 import time
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 import requests
 from bs4 import BeautifulSoup
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_FILE = os.path.join(REPO_ROOT, "regulation_data.json")
@@ -63,6 +64,45 @@ def fetch_regulation_from_card_page(set_code: str, card_num: int, session: reque
     except Exception:
         pass
     return None
+
+
+def fetch_duplicate_crossrefs(existing: dict, session: requests.Session) -> dict[str, dict[int, list[tuple[str, int]]]]:
+    """
+    For each card in duplicate_skip_cards, fetch its page to find cross-set
+    same-card references. Returns {set: {card: [(other_set, other_card), ...]}}.
+    """
+    dup_refs: dict[str, dict[int, list[tuple[str, int]]]] = {}
+    skip_cards = existing.get("duplicate_skip_cards", {})
+    total = sum(len(nums) for nums in skip_cards.values())
+    done = 0
+
+    for set_code, numbers in skip_cards.items():
+        for card_num in sorted(numbers):
+            url = f"https://limitlesstcg.com/cards/{set_code}/{card_num}"
+            try:
+                resp = session.get(url, timeout=15)
+                resp.raise_for_status()
+                soup = BeautifulSoup(resp.content, "html.parser")
+                for a in soup.find_all("a", href=True):
+                    m = re.match(r"/cards/([A-Z0-9]+)/(\d+)", a["href"])
+                    if m and m.group(1) != set_code:
+                        other_set = m.group(1)
+                        other_num = int(m.group(2))
+                        if set_code not in dup_refs:
+                            dup_refs[set_code] = {}
+                        if card_num not in dup_refs[set_code]:
+                            dup_refs[set_code][card_num] = []
+                        if (other_set, other_num) not in dup_refs[set_code][card_num]:
+                            dup_refs[set_code][card_num].append((other_set, other_num))
+            except Exception:
+                pass
+            done += 1
+            if done % 20 == 0:
+                print(f"  Duplicate crossrefs: {done}/{total}")
+            time.sleep(3)
+
+    print(f"  Duplicate crossrefs complete: {done}/{total}")
+    return dup_refs
 
 
 def main():
@@ -119,6 +159,14 @@ def main():
         print(f"Fetched regulation for {fetched} SVP cards")
 
     existing["per_card_regulation"] = per_card
+
+    # Build duplicate cross-references from card pages
+    print("\nFetching duplicate cross-references...")
+    dup_refs = fetch_duplicate_crossrefs(existing, session)
+    if dup_refs:
+        existing["duplicate_crossrefs"] = dup_refs
+        total_links = sum(len(refs) for set_code, cards in dup_refs.items() for card_num, refs in cards.items())
+        print(f"  {total_links} cross-references found across {len(dup_refs)} sets")
 
     # Update set_regulation
     set_reg: dict[str, list[str]] = {}
