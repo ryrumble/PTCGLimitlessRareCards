@@ -53,6 +53,9 @@ DUPLICATE_SKIP_CARDS: dict[str, set[int]] = {
     set_code: set(numbers) for set_code, numbers in _reg_data["duplicate_skip_cards"].items()
 }
 
+# Per-card regulation mapping from search page fetch
+PER_CARD_REGULATION: dict[str, dict[str, str]] = _reg_data.get("per_card_regulation", {})
+
 
 def is_g_regulation(set_code: str, card_number: int) -> bool:
     """
@@ -91,6 +94,11 @@ def get_regulation(set_code: str, card_number: int) -> str:
         Regulation letter: 'F', 'G', 'H', 'I', 'J', or '?' if unknown
     """
     set_code = set_code.upper()
+    num_str = str(card_number)
+
+    # Prefer per-card regulation (most accurate, from regulation search pages)
+    if set_code in PER_CARD_REGULATION and num_str in PER_CARD_REGULATION[set_code]:
+        return PER_CARD_REGULATION[set_code][num_str]
 
     if set_code in FULL_G_REGULATION_SETS:
         return "G"
@@ -108,7 +116,6 @@ def get_regulation(set_code: str, card_number: int) -> str:
         other = MIXED_SET_OTHER_REGULATION.get(set_code)
         if other:
             return other
-        # Fall back to set-level mapping
         return SET_REGULATION.get(set_code, "?")
 
     return SET_REGULATION.get(set_code, "?")

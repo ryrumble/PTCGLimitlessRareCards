@@ -57,6 +57,7 @@
   .col-count.popular { color: #dc2626; }
   .col-count.unseen { color: #9ca3af; }
   .col-date { font-family: monospace; font-size: 0.8rem; color: #6b7280; }
+  .col-dup { font-size: 0.7rem; color: #9ca3af; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
   /* Target range rows */
   tr.rare td { background: #f0fdf4; }
@@ -135,6 +136,7 @@
           <th data-col="c" class="active">Card Name <span class="arrow">&#9650;</span></th>
           <th data-col="d">Decklists <span class="arrow">&#9650;</span></th>
           <th data-col="t">Latest Tournament <span class="arrow">&#9650;</span></th>
+          <th style="width:60px">Duplicates</th>
         </tr>
       </thead>
       <tbody id="tbody"></tbody>
@@ -254,6 +256,7 @@ function render() {
     else if (c.d > MAX_THRESHOLD) countCls += " popular";
     else countCls += " rare";
     const regCls = `col-reg col-reg-${c.r === "?" ? "\\?" : c.r}`;
+    const dups = c.u ? c.u.join(", ") : "";
     html += `<tr${cls} data-img="${esc(c.i)}" data-name="${esc(c.c)}">
       <td class="${regCls}">${esc(c.r)}</td>
       <td class="col-set">${esc(c.s)}</td>
@@ -261,9 +264,10 @@ function render() {
       <td class="col-name">${esc(c.c)}</td>
       <td class="${countCls}">${c.d}</td>
       <td class="col-date">${esc(c.t)}</td>
+      <td class="col-dup">${esc(dups)}</td>
     </tr>`;
   }
-  tbody.innerHTML = html || '<tr><td colspan="6" style="text-align:center;padding:40px;color:#999;">No cards match the current filters.</td></tr>';
+  tbody.innerHTML = html || '<tr><td colspan="7" style="text-align:center;padding:40px;color:#999;">No cards match the current filters.</td></tr>';
   updateStats();
   document.getElementById("result-count").textContent = `${filtered.length} / ${allCards.length} cards`;
 

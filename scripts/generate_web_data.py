@@ -17,7 +17,6 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 def img_url(set_code, card_number):
-    """Construct the LimitlessTCG CDN URL for a card image."""
     return (
         f"https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/tpci/{set_code}/{set_code}_{card_number:03d}_R_EN_SM.png"
     )
@@ -28,15 +27,51 @@ def load_cache():
     if not os.path.exists(path):
         print(f"Error: {path} not found. Run a scrape first.")
         sys.exit(1)
-    try:
-        with open(path, encoding="utf-8") as f:
-            return json.load(f)
-    except json.JSONDecodeError as e:
-        print(f"Error: cache.json is corrupt: {e}")
-        sys.exit(1)
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
 
 
-def export_cards(cache):
+def load_config():
+    path = os.path.join(REPO_ROOT, "config.json")
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def load_reg_data():
+    path = os.path.join(REPO_ROOT, "regulation_data.json")
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def build_duplicate_map(config, reg_data):
+    """Build a reverse map: card_number -> [(set_code, card_number), ...]
+    for every card that appears in any set's duplicate list."""
+    dup_map: dict[int, list[tuple[str, int]]] = {}
+
+    for set_code, numbers in reg_data.get("duplicate_skip_cards", {}).items():
+        for n in numbers:
+            if n not in dup_map:
+                dup_map[n] = []
+            dup_map[n].append((set_code, n))
+
+    for set_code, set_data in config.get("sets", {}).items():
+        for n in set_data.get("duplicate_skip_numbers", []):
+            if n not in dup_map:
+                dup_map[n] = []
+            dup_map[n].append((set_code, n))
+
+    return dup_map
+
+
+def format_dup_refs(card_set, card_num, dup_map):
+    """For a given card, return the list of duplicate refs as formatted strings.
+    Excludes self-references. Returns ['SET NUM (REG)', ...]."""
+    refs = dup_map.get(card_num, [])
+    return sorted(f"{s} {n:03d} ({get_regulation(s, n)})" for s, n in refs if s != card_set)
+
+
+def export_cards(cache, config, reg_data):
+    dup_map = build_duplicate_map(config, reg_data)
     cards = []
     for card_key, data in cache.get("cards", {}).items():
         match = re.match(r"^([A-Z0-9]+)_(\d+)$", card_key)
@@ -45,25 +80,29 @@ def export_cards(cache):
         set_code = match.group(1)
         card_number = int(match.group(2))
         reg = get_regulation(set_code, card_number)
-        cards.append(
-            {
-                "s": set_code,
-                "n": card_number,
-                "c": data.get("card_name", "Unknown"),
-                "d": data.get("decklist_count", 0),
-                "t": data.get("latest_tournament") or "",
-                "p": data.get("skip_permanent", False),
-                "r": reg,
-                "i": img_url(set_code, card_number),
-            }
-        )
+        entry = {
+            "s": set_code,
+            "n": card_number,
+            "c": data.get("card_name", "Unknown"),
+            "d": data.get("decklist_count", 0),
+            "t": data.get("latest_tournament") or "",
+            "p": data.get("skip_permanent", False),
+            "r": reg,
+            "i": img_url(set_code, card_number),
+        }
+        dups = format_dup_refs(set_code, card_number, dup_map)
+        if dups:
+            entry["u"] = dups  # duplicates
+        cards.append(entry)
     cards.sort(key=lambda x: (x["s"], x["n"]))
     return cards
 
 
 def main():
     cache = load_cache()
-    cards = export_cards(cache)
+    config = load_config()
+    reg_data = load_reg_data()
+    cards = export_cards(cache, config, reg_data)
 
     out_dir = os.path.join(REPO_ROOT, "docs", "data")
     os.makedirs(out_dir, exist_ok=True)
@@ -72,16 +111,23 @@ def main():
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(cards, f, separators=(",", ":"))
 
-    print(f"Exported {len(cards)} cards to {os.path.relpath(out_path, REPO_ROOT)}")
-
-    reg_counts = {}
+    # Stats
+    total = len(cards)
+    with_dups = sum(1 for c in cards if "u" in c)
+    reg_counts: dict[str, int] = {}
     for c in cards:
         reg_counts[c["r"]] = reg_counts.get(c["r"], 0) + 1
+
+    print(f"Exported {total} cards to {os.path.relpath(out_path, REPO_ROOT)}")
+    print(f"  {with_dups} cards have duplicate references")
     for reg in sorted(reg_counts):
         print(f"  Reg {reg}: {reg_counts[reg]} cards")
 
-    set_codes = sorted(set(c["s"] for c in cards))
-    print(f"Sets: {', '.join(set_codes)}")
+    # Show example duplicates
+    for c in cards:
+        if "u" in c:
+            print(f"\n  Example: {c['s']} {c['n']} ({c['r']}) -> duplicates: {c['u'][:3]}")
+            break
 
 
 if __name__ == "__main__":
