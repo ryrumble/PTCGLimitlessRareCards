@@ -28,6 +28,8 @@ env/
 cache.json
 scraper.log
 scraper.log.*
+
+
 exported_results.json
 exported_results.csv
 exported_results.xlsx

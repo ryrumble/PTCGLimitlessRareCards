@@ -27,14 +27,23 @@ if errorlevel 1 (
 )
 echo.
 
-REM Step 2: Clean previous build artifacts
+REM Step 2: Generate web viewer data
+echo Generating web viewer data...
+python scripts/generate_web_data.py
+if errorlevel 1 (
+    echo.
+    echo WARNING: Web data generation failed. Continuing anyway.
+)
+echo.
+
+REM Step 3: Clean previous build artifacts
 echo Cleaning previous build artifacts...
 if exist "build" rmdir /s /q "build"
 if exist "dist" rmdir /s /q "dist"
 if exist "LimitlessTCGScraper.spec" del /q "LimitlessTCGScraper.spec"
 echo.
 
-REM Step 3: Build the .exe
+REM Step 4: Build the .exe
 echo Building standalone .exe with PyInstaller...
 python -m PyInstaller --onefile --windowed --name LimitlessTCGScraper --add-data "config.json;." run_gui.py
 if errorlevel 1 (
